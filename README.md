@@ -4,7 +4,7 @@ Client ID: 2213122435
 API Key: 3523424t3334m3rddf3345
 
 ### GET /articles ###
-#### Show All Articles ####
+##### Show All Articles #####
 This method returns full list of articles. All available API information is presented for each article.
 
 Request URL:
@@ -28,7 +28,7 @@ Sample Response
 
 
 ### GET /articles/new ###
-#### New Article ####
+##### New Article #####
 This method allows you to create a new article. See the required parameters section below for an explanation of the variables that are needed to create a new article.
 
 Request URL:
@@ -55,7 +55,7 @@ Sample Response
 
 
 ### GET /articles/[article_id] ###
-#### Show Article ####
+##### Show Article #####
 This method returns full information for a specific droplet ID that is passed in the URL.
 
 Request URL:
@@ -79,7 +79,7 @@ Sample Response
 
 
 ### GET /articles/[article_id]/update ###
-#### Update Article ####
+##### Update Article #####
 This method update the article.
 
 Request URL:
@@ -106,7 +106,7 @@ Sample Response
 
 
 ### GET /articles/[article_id]/destroy ###
-#### Destroy Article ####
+##### Destroy Article #####
 This method destroys one of your article - this is irreversible.
 
 Request URL:
