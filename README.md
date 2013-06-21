@@ -16,11 +16,9 @@ Show All Articles
 This method returns full list of articles. All available API information is presented for each article.
 
 Request URL:
-
 `http://localhost:4000/articles/?client_id=[your_client_id]&api_key=[your_api_key]`
 
 Sample Response:
-
 `{
     "status": "OK",
     "articles": [
