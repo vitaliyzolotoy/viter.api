@@ -19,6 +19,8 @@ viter.configure('development', function(){
   viter.use(express.errorHandler());
 });
 
+
+
 // Define Model for Article
 var article = mongoose.Schema({
     title: {
@@ -55,6 +57,12 @@ var controllers = {
 
     renderData: function(request, response, data) {
         return response.send(data);
+    },
+
+    checkApiStatus: function(request, response) {
+        data.status = '200 OK';
+        data.message = 'API is running';
+        controllers.renderData(request, response, data);
     },
 
     getArticlesList: function(request, response) {
