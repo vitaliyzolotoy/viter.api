@@ -1,0 +1,20 @@
+{
+    "name": "viter.api",
+    "version": "0.0.1",
+    "description": "RESTful API for viter",
+    "author": {
+        "name": "Vitaly Zolotoy",
+        "email": "vitaly.zolotoy@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/zolotoy/viter.api.git"
+    },
+    "dependencies": {
+        "express": "*",
+        "mongoose": "*"
+    },
+    "engines": {
+        "node": ">= 0.8.0"
+    }
+}

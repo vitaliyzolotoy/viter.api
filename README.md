@@ -13,13 +13,12 @@ Request URL:
 Sample Response
 ```
 {
-    "status": "OK",
+    "status": "200 OK",
     "articles": [
         {
-            "id": id,
+            "_id": id,
             "title": "title",
-            "content": "content",
-            "visibility": true
+            "content": "content"
         }
     ]
 }
@@ -37,17 +36,15 @@ Request URL:
 Parameters
 * title: Required, String, this is the title of the article
 * content: Required, String, this is the content of the article
-* visibility: Optional, Boolean, this is the option of the article visibility
 
 Sample Response
 ```
 {
-    "status": "OK",
+    "status": "200 OK",
     "article": {
-        "id": id,
+        "_id": id,
         "title": "title",
-        "content": "content",
-        "visibility": true
+        "content": "content"
     }
 }
 ```
@@ -67,11 +64,10 @@ Parameters
 Sample Response
 ```
 {
-    "status": "OK",
+    "status": "200 OK",
     "article": {
         "title": "title",
-        "content": "content",
-        "visibility": true
+        "content": "content"
     }
 }
 ```
@@ -86,19 +82,17 @@ Request URL:
 ``` http://localhost:4000/[article_id]/update?client_id=[your_client_id]&api_key=[your_api_key] ```
 
 Parameters
-* title: Optional, String, this is the title of the article
-* content: Optional, String, this is the content of the article
-* visibility: Optional, Boolean, this is the option of the article visibility
+* title: Required, String, this is the title of the article
+* content: Required, String, this is the content of the article
 
 Sample Response
 ```
 {
-    "status": "OK",
+    "status": "200 OK",
     "article": {
-        "id": id,
+        "_id": id,
         "title": "title",
-        "content": "content",
-        "visibility": true
+        "content": "content"
     }
 }
 ```
@@ -118,7 +112,7 @@ Parameters
 Sample Response
 ```
 {
-    "status": "OK"
+    "status": "200 OK"
 }
 ```
 
