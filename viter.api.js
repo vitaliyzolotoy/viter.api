@@ -60,6 +60,7 @@ var controllers = {
     },
 
     checkApiStatus: function(request, response) {
+        var data = {};
         data.status = '200 OK';
         data.message = 'API is running';
         controllers.renderData(request, response, data);
