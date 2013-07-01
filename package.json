@@ -12,7 +12,8 @@
     },
     "dependencies": {
         "express": "*",
-        "mongoose": "*"
+        "mongoose": "*",
+        "inherit": "*"
     },
     "engines": {
         "node": ">= 0.8.0"

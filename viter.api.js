@@ -1,5 +1,6 @@
 var express = require("express"),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    inherit = require('inherit');
 
 var viter = express();
 
@@ -18,6 +19,106 @@ viter.configure(function(){
 viter.configure('development', function(){
   viter.use(express.errorHandler());
 });
+
+
+
+
+
+
+// base "class"
+var Core = inherit(/** @lends Core.prototype */{
+    __constructor : function(request, response) { // constructor
+        this._self = this;
+        this._request = request || {};
+        this._response = response || {};
+    },
+
+    checkClientId : function() {
+        return true;
+    },
+
+    isClient : function() {
+        return true;
+    },
+
+    checkApiStatus : function() {
+        var data = {};
+        data.status = '200 OK';
+        data.message = 'API is running';
+        controllers.renderData(request, response, data);
+    },
+
+    renderData : function(data) {
+        return this._response.json(data);
+    }
+}, /** @lends A */ {    
+});
+
+// inherited "class" from Core
+var Articles = inherit(Core, /** @lends Articles.prototype */{
+    createNewArticle : function() {
+    },
+
+    getArticlesList : function() {
+        var _self = this;
+        ArticleModel.find(function(error, articles) {
+            var data = {};
+            if (!error) {
+                if (articles != false) {
+                    data.status = '200 OK';
+                    data.articles = articles;
+                    _self.renderData(data);
+                } else {
+                    data.status = '204 No Content';
+                    _self.renderData(data);
+                }
+            }
+        });
+    }
+
+}, /** @lends Articles */ {
+    getArticleById : function() {
+        return true;
+    },
+
+    updateArticleById : function() {
+        return true;
+    },
+
+    destroyArticleById : function() {
+        return true;
+    }
+});
+
+
+
+
+// Status
+viter.get('/', function(request, response) {
+    var articles = new Articles(request, response);
+    articles.getArticlesList();
+});
+
+// Articles
+viter.get('/articles', function(request, response) {
+    var articles = new Articles(request, response);
+    articles.getArticlesList();
+});
+
+
+// var instanceOfB = new B('property');
+
+// instanceOfB.getProperty(); // returns 'property of instanceB'
+// instanceOfB.getType(); // returns 'AB'
+// B.staticMethod(); // returns 'staticA of staticB'
+
+
+
+
+
+
+
+
 
 
 
@@ -52,7 +153,8 @@ var controllers = {
     },
 
     isClient: function(request, response) {
-        return this.checkClientId(request, response) && this.checkApiKey(request, response);
+        return true;
+        // return this.checkClientId(request, response) && this.checkApiKey(request, response);
     },
 
     renderData: function(request, response, data) {
@@ -196,9 +298,9 @@ viter.get('/', function (request, response) {
 });
 
 // Show All Articles
-viter.get('/articles', function (request, response) {
-    controllers.getArticlesList(request, response);
-});
+// viter.get('/articles', function (request, response) {
+//     controllers.getArticlesList(request, response);
+// });
 
 
 
