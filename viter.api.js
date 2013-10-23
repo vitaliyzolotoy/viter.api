@@ -5,7 +5,7 @@ var express = require("express"),
 var viter = express();
 
 // Database
-mongoose.connect('mongodb://localhost/viter');
+mongoose.connect('mongodb://0.0.0.0/viter');
 
 // Config
 viter.configure(function(){
