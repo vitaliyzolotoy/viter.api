@@ -49,9 +49,12 @@ var Core = inherit(/** @lends Core.prototype */{
     },
 
     renderData : function(data) {
-        return this._response.json(data);
+        this._response.charset = 'utf8';
+        this._response.type('application/json');
+        this._response.json(data);
+        return this._response;
     }
-}, /** @lends A */ {    
+}, /** @lends A */ {
 });
 
 // inherited "class" from Core
