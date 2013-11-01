@@ -51,8 +51,8 @@ var Core = inherit(/** @lends Core.prototype */{
     renderData : function(data) {
         this._response.charset = 'utf8';
         this._response.type('application/json');
-        return this._response.json(data);
-        // return this._response;
+        this._response.json(data);
+        return this._response;
     }
 }, /** @lends A */ {
 });
