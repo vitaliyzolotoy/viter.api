@@ -51,8 +51,8 @@ var Core = inherit(/** @lends Core.prototype */{
     renderData : function(data) {
         this._response.charset = 'utf8';
         this._response.type('application/json');
-        this._response.json(data);
-        return this._response;
+        return this._response.json(data);
+        // return this._response;
     }
 }, /** @lends A */ {
 });
@@ -64,7 +64,7 @@ var Articles = inherit(Core, /** @lends Articles.prototype */{
 
     getArticlesList : function() {
         var _self = this;
-        ArticleModel.find(function(error, articles) {
+        ArticleModel.find( {}, {}, { sort: { '_id' : -1 } }, function(error, articles) {
             var data = {};
             if (!error) {
                 if (articles != false) {
