@@ -27,7 +27,7 @@ Sample Response
 
 
 ### POST /notes ###
-##### Create New Note #####
+##### New Note #####
 This method allows you to create a new note. See the required parameters section below for an explanation of the variables that are needed to create a new note.
 
 Request URL:
