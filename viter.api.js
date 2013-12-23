@@ -1,6 +1,5 @@
 var express = require("express"),
     mongoose = require('mongoose'),
-    inherit = require('inherit'),
     viter = express();
 
 // Database
@@ -38,6 +37,10 @@ var note = mongoose.Schema({
 var NoteModel = mongoose.model('note', note);
 
 var controllers = {
+    isClient: function() {
+        return true;
+    },
+
     renderData: function(request, response, data) {
         return response.send(data);
     },
