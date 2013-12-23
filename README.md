@@ -81,7 +81,7 @@ Sample Response
 
 
 
-### PUT /notes/[note_id] ###
+### POST /notes/[note_id] ###
 ##### Update Note #####
 This method update the note.
 
