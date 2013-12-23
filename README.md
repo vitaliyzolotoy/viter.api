@@ -1,24 +1,24 @@
 ## API Documentation ##
 
-Client ID: 2213122435
-API Key: 3523424t3334m3rddf3345
-
-### GET /articles ###
-##### Show All Articles #####
-This method returns full list of articles. All available API information is presented for each article.
+### GET /notes ###
+##### Show All Notes #####
+This method returns full list of notes. All available API information is presented for each notes.
 
 Request URL:
-``` http://localhost:4000/articles/?client_id=[your_client_id]&api_key=[your_api_key] ```
+``` http://localhost:4000/notes ```
 
 Sample Response
 ```
 {
     "status": "200 OK",
-    "articles": [
+    "message": "A list of all notes"
+    "notes": [
         {
-            "_id": id,
-            "title": "title",
-            "content": "content"
+            "_id": "52b445a15917ccdb01000002",
+            "title": "Title",
+            "content": "Content",
+            "created": "2013-12-19T10:16:29.030Z",
+            "modified": "2013-12-20T13:26:57.030Z"
         }
     ]
 }
@@ -26,93 +26,100 @@ Sample Response
 
 
 
-### GET /articles/new ###
-##### New Article #####
-This method allows you to create a new article. See the required parameters section below for an explanation of the variables that are needed to create a new article.
+### POST /notes ###
+##### Create New Note #####
+This method allows you to create a new note. See the required parameters section below for an explanation of the variables that are needed to create a new note.
 
 Request URL:
-``` http://localhost:4000/articles/new?client_id=[your_client_id]&api_key=[your_api_key]&title=[article_title]&content=[article_content] ```
+``` http://localhost:4000/notes ```
 
 Parameters
-* title: Required, String, this is the title of the article
-* content: Required, String, this is the content of the article
+* title: Required, String, this is the title of the note
+* content: Required, String, this is the content of the note
 
 Sample Response
 ```
 {
     "status": "200 OK",
-    "article": {
-        "_id": id,
-        "title": "title",
-        "content": "content"
+    "message": "The note was created",
+    "notes": {
+        "_id": "52b445a15917ccdb01000002",
+        "title": "Title",
+        "content": "Content",
+        "created": "2013-12-19T10:16:29.030Z",
+        "modified": "2013-12-20T13:26:57.030Z"
     }
 }
 ```
 
 
 
-### GET /articles/[article_id] ###
-##### Show Article #####
-This method returns full information for a specific droplet ID that is passed in the URL.
+### GET /notes/[note_id] ###
+##### Show Note #####
+This method returns full information for a specific note ID that is passed in the URL.
 
 Request URL:
-``` http://localhost:4000/articles/[article_id]?client_id=[your_client_id]&api_key=[your_api_key] ```
+``` http://localhost:4000/notes/[note_id] ```
 
 Parameters
-* article_id: Required, String, this is the id of your article
+* note_id: Required, String, this is the id of your article
 
 Sample Response
 ```
 {
     "status": "200 OK",
-    "article": {
-        "title": "title",
-        "content": "content"
+    "message": "The note was found",
+    "notes": {
+        "_id": "52b445a15917ccdb01000002",
+        "title": "Title",
+        "content": "Content",
+        "created": "2013-12-19T10:16:29.030Z",
+        "modified": "2013-12-20T13:26:57.030Z"
     }
 }
 ```
 
 
 
-### GET /articles/[article_id]/update ###
-##### Update Article #####
-This method update the article.
+### PUT /notes/[note_id] ###
+##### Update Note #####
+This method update the note.
 
 Request URL:
-``` http://localhost:4000/[article_id]/update?client_id=[your_client_id]&api_key=[your_api_key] ```
-
-Parameters
-* title: Required, String, this is the title of the article
-* content: Required, String, this is the content of the article
+``` http://localhost:4000/[note_id] ```
 
 Sample Response
 ```
 {
     "status": "200 OK",
-    "article": {
-        "_id": id,
-        "title": "title",
-        "content": "content"
+    "message": "The note was updated",
+    "notes": {
+        "_id": "52b445a15917ccdb01000002",
+        "title": "Title",
+        "content": "Content",
+        "created": "2013-12-19T10:16:29.030Z",
+        "modified": "2013-12-20T13:26:57.030Z"
     }
 }
 ```
 
 
 
-### GET /articles/[article_id]/destroy ###
-##### Destroy Article #####
-This method destroys one of your article - this is irreversible.
+### DELETE /notes/[note_id] ###
+##### Destroy Note #####
+This method destroys one of your note - this is irreversible.
 
 Request URL:
-``` http://localhost:4000/articles/[article_id]/destroy?client_id=[your_client_id]&api_key=[your_api_key] ```
+``` http://localhost:4000/notes/[note_id] ```
 
 Parameters
-* article_id: Required, String, this is the id of the article you want to destroy
+* note_id: Required, String, this is the id of the article you want to destroy
 
 Sample Response
 ```
 {
-    "status": "200 OK"
+    "status": "200 OK",
+    "message": "The note was destroyed"
 }
 ```
 
