@@ -75,12 +75,13 @@ var controllers = {
 
     createNewNote: function(request, response) {
         var data = {};
+        console.log(request);
         if (controllers.isClient(request, response)) {
-            if (request.query.title && request.query.content) {
+            if (request.body.title && request.body.content) {
                 var note;
                 note = new NoteModel({
-                    title: request.query.title,
-                    content: request.query.content
+                    title: request.body.title,
+                    content: request.body.content
                 });
                 note.save(function(error) {
                     if (!error) {
@@ -125,9 +126,9 @@ var controllers = {
         if (controllers.isClient(request, response)) {
             NoteModel.findById(request.params.id, function (error, note) {
                 if (note) {
-                    if (request.query.title && request.query.content) {
-                        note.title = request.query.title;
-                        note.content = request.query.content;
+                    if (request.body.title && request.body.content) {
+                        note.title = request.body.title;
+                        note.content = request.body.content;
                         note.save(function(error) {
                             if (!error) {
                                 data.status = '200 OK';
