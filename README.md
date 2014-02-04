@@ -86,7 +86,7 @@ Sample Response
 This method update the note.
 
 Request URL:
-``` http://localhost:4000/[note_id] ```
+``` http://localhost:4000/notes/[note_id] ```
 
 Sample Response
 ```

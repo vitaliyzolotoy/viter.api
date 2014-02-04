@@ -55,10 +55,11 @@ var controllers = {
     getNotesList: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            NoteModel.find(function(error, notes) {
+            NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         data.status = '200 OK';
+                        data.message = 'A list of all notes';
                         data.notes = notes;
                         controllers.renderData(request, response, data);
                     } else {
@@ -75,7 +76,6 @@ var controllers = {
 
     createNewNote: function(request, response) {
         var data = {};
-        console.log(request);
         if (controllers.isClient(request, response)) {
             if (request.body.title && request.body.content) {
                 var note;
@@ -86,6 +86,7 @@ var controllers = {
                 note.save(function(error) {
                     if (!error) {
                         data.status = '200 OK';
+                        data.message = 'The note was created';
                         data.note = note;
                         controllers.renderData(request, response, data);
                     }
@@ -107,6 +108,7 @@ var controllers = {
                 if (!error) {
                     if (note) {
                         data.status = '200 OK';
+                        data.message = 'The note was found';
                         data.note = note;
                         controllers.renderData(request, response, data);
                     } else {
@@ -132,6 +134,7 @@ var controllers = {
                         note.save(function(error) {
                             if (!error) {
                                 data.status = '200 OK';
+                                data.message = 'The note was updated';
                                 controllers.renderData(request, response, data);
                             }
                         });
@@ -158,6 +161,7 @@ var controllers = {
                     note.remove(function(error) {
                         if (!error) {
                             data.status = '200 OK';
+                            data.message = 'The note was destroyed';
                             controllers.renderData(request, response, data);
                         }
                     });
