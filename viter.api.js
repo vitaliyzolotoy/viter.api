@@ -14,11 +14,13 @@ viter.configure(function(){
     viter.use(viter.router);
 });
 
-// Define Model for Article
 var note = mongoose.Schema({
     title: {
         type: String,
         required: true
+    },
+    tags: {
+        type: String,
     },
     content: {
         type: String,
@@ -35,6 +37,27 @@ var note = mongoose.Schema({
 });
 
 var NoteModel = mongoose.model('note', note);
+
+var tag = mongoose.Schema({
+    relational: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    modified: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+var TagModel = mongoose.model('tag', tag);
 
 var controllers = {
     isClient: function() {
@@ -85,6 +108,7 @@ var controllers = {
                 });
                 note.save(function(error) {
                     if (!error) {
+                        request.body.tags && controllers.createNewTags(note.id, request.body.tags);
                         data.status = '200 OK';
                         data.message = 'The note was created';
                         data.note = note;
@@ -130,7 +154,9 @@ var controllers = {
                 if (note) {
                     if (request.body.title && request.body.content) {
                         note.title = request.body.title;
+                        note.tags = request.body.tags && controllers.createNewTags(request.body.id, request.body.tags),
                         note.content = request.body.content;
+                        note.modified = Date.now();
                         note.save(function(error) {
                             if (!error) {
                                 data.status = '200 OK';
@@ -174,6 +200,63 @@ var controllers = {
             data.status = '403 Forbidden';
             controllers.renderData(request, response, data);
         }
+    },
+
+    getTagsList: function(request, response) {
+        var data = {};
+        if (controllers.isClient(request, response)) {
+            TagModel.find({}, null, {sort: {created: -1}}, function(error, tags) {
+                if (!error) {
+                    if (tags != false) {
+                        data.status = '200 OK';
+                        data.message = 'A list of all tags';
+                        data.tags = tags;
+                        controllers.renderData(request, response, data);
+                    } else {
+                        data.status = '204 No Content';
+                        controllers.renderData(request, response, data);
+                    }
+                }
+            });
+        } else {
+            data.status = '403 Forbidden';
+            controllers.renderData(request, response, data);
+        }
+    },
+
+    getTagsListRelationalToId: function(request, response) {
+        var data = {};
+        if (controllers.isClient(request, response)) {
+            TagModel.find({'relational': request.params.id}, null, {sort: {created: -1}}, function(error, tags) {
+                if (!error) {
+                    if (tags != false) {
+                        data.status = '200 OK';
+                        data.message = 'A list of all tags relational to ID';
+                        data.tags = tags;
+                        controllers.renderData(request, response, data);
+                    } else {
+                        data.status = '204 No Content';
+                        controllers.renderData(request, response, data);
+                    }
+                }
+            });
+        } else {
+            data.status = '403 Forbidden';
+            controllers.renderData(request, response, data);
+        }
+    },
+
+    createNewTags: function(relational, content) {
+        var tag,
+            tags = content.split(',');
+        tags.map(function(item) {
+            tag = new TagModel({
+                relational: relational,
+                content: item
+            });
+            tag.save();
+        });
+
     }
 
 };
@@ -206,6 +289,16 @@ viter.post('/notes/:id', function (request, response) {
 // Destroy Note
 viter.delete('/notes/:id', function (request, response) {
     controllers.destroyNoteById(request, response);
+});
+
+// Show All Tags
+viter.get('/tags', function (request, response) {
+    controllers.getTagsList(request, response);
+});
+
+// Show All Tags relational to ID
+viter.get('/tags/:id', function (request, response) {
+    controllers.getTagsListRelationalToId(request, response);
 });
 
 viter.listen(4000);
