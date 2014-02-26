@@ -79,6 +79,7 @@ var controllers = {
         var data = {};
         if (controllers.isClient(request, response)) {
             NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            // NoteModel.find({}, null, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         data.status = '200 OK';
