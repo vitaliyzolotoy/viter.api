@@ -283,7 +283,7 @@ viter.get('/notes/:id', function (request, response) {
 });
 
 // Update Note
-viter.post('/notes/:id', function (request, response) {
+viter.put('/notes/:id', function (request, response) {
     controllers.updateNoteById(request, response);
 });
 
