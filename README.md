@@ -62,7 +62,7 @@ Request URL:
 ``` http://localhost:4000/notes/[note_id] ```
 
 Parameters
-* note_id: Required, String, this is the id of your article
+* note_id: Required, String, this is the id of your note
 
 Sample Response
 ```
@@ -113,13 +113,33 @@ Request URL:
 ``` http://localhost:4000/notes/[note_id] ```
 
 Parameters
-* note_id: Required, String, this is the id of the article you want to destroy
+* note_id: Required, String, this is the id of the note you want to destroy
 
 Sample Response
 ```
 {
     "status": "200 OK",
     "message": "The note was destroyed"
+}
+```
+
+
+
+### GET /nextprev/[note_id] ###
+##### Next and prev notes #####
+This method gets next and prev notes
+
+Request URL:
+``` http://localhost:4000/nextprev/[note_id] ```
+
+Parameters
+* note_id: Required, String, this is the id of the note you want to get the siblings
+
+Sample Response
+```
+{
+    "status": "200 OK",
+    "message": "Next and prev notes"
 }
 ```
 

@@ -1,5 +1,7 @@
-var express = require("express"),
+var fs = require('fs'),
+    express = require('express'),
     mongoose = require('mongoose'),
+    aws = require('aws-sdk'),
     viter = express();
 
 // Database
@@ -78,8 +80,8 @@ var controllers = {
     getNotesList: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
-            // NoteModel.find({}, null, function(error, notes) {
+            // NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            NoteModel.find({}, null, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         data.status = '200 OK';
@@ -203,6 +205,33 @@ var controllers = {
         }
     },
 
+    getNextAndPrevNote: function(request, response) {
+        var data = {};
+        if (controllers.isClient(request, response)) {
+            // NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            NoteModel.find({}, null, function(error, notes) {
+                if (!error) {
+                    if (notes != false) {
+                        notes.filter(function(note, index) {
+                            if (note._id == request.params.id) {
+                                data.status = '200 OK';
+                                data.message = 'Next and prev notes';
+                                data.nextprev = [notes[index + 1], notes[index - 1]];
+                                controllers.renderData(request, response, data);
+                            }
+                        });
+                    } else {
+                        data.status = '204 No Content';
+                        controllers.renderData(request, response, data);
+                    }
+                }
+            });
+        } else {
+            data.status = '403 Forbidden';
+            controllers.renderData(request, response, data);
+        }
+    },
+
     getTagsList: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
@@ -257,7 +286,16 @@ var controllers = {
             });
             tag.save();
         });
+    },
 
+    login: function (request, response) {
+        var data = {};
+        if (request.body && request.body.email === 'e' && request.body.password === 'p') {
+            data.message = 'welcome';
+        } else {
+            data.message = 'user not found';
+        }
+        controllers.renderData(request, response, data);
     }
 
 };
@@ -292,6 +330,11 @@ viter.delete('/notes/:id', function (request, response) {
     controllers.destroyNoteById(request, response);
 });
 
+// Next Prev
+viter.get('/nextprev/:id', function (request, response) {
+    controllers.getNextAndPrevNote(request, response);
+});
+
 // Show All Tags
 viter.get('/tags', function (request, response) {
     controllers.getTagsList(request, response);
@@ -300,6 +343,11 @@ viter.get('/tags', function (request, response) {
 // Show All Tags relational to ID
 viter.get('/tags/:id', function (request, response) {
     controllers.getTagsListRelationalToId(request, response);
+});
+
+// Login
+viter.get('/login', function (request, response) {
+    controllers.login(request, response);
 });
 
 viter.listen(4000);
