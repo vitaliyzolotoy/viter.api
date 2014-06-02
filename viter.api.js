@@ -80,8 +80,8 @@ var controllers = {
     getNotesList: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            // NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
-            NoteModel.find({}, null, function(error, notes) {
+            NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            // NoteModel.find({}, null, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         data.status = '200 OK';
@@ -103,15 +103,15 @@ var controllers = {
     createNewNote: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            if (request.query.title && request.query.content) {
+            if (request.body.title && request.body.content) {
                 var note;
                 note = new NoteModel({
-                    title: request.query.title,
-                    content: request.query.content
+                    title: request.body.title,
+                    content: request.body.content
                 });
                 note.save(function(error) {
                     if (!error) {
-                        request.query.tags && controllers.createNewTags(note.id, request.query.tags);
+                        request.body.tags && controllers.createNewTags(note.id, request.body.tags);
                         data.status = '200 OK';
                         data.message = 'The note was created';
                         data.note = note;
@@ -155,10 +155,10 @@ var controllers = {
         if (controllers.isClient(request, response)) {
             NoteModel.findById(request.params.id, function (error, note) {
                 if (note) {
-                    if (request.query.title && request.query.content) {
-                        note.title = request.query.title;
-                        note.tags = request.query.tags && controllers.createNewTags(request.query.id, request.query.tags),
-                        note.content = request.query.content;
+                    if (request.body.title && request.body.content) {
+                        note.title = request.body.title;
+                        note.tags = request.body.tags && controllers.createNewTags(request.body.id, request.body.tags),
+                        note.content = request.body.content;
                         note.modified = Date.now();
                         note.save(function(error) {
                             if (!error) {
@@ -208,15 +208,15 @@ var controllers = {
     getNextAndPrevNote: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            // NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
-            NoteModel.find({}, null, function(error, notes) {
+            NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            // NoteModel.find({}, null, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         notes.filter(function(note, index) {
                             if (note._id == request.params.id) {
                                 data.status = '200 OK';
                                 data.message = 'Next and prev notes';
-                                data.nextprev = [notes[index + 1], notes[index - 1]];
+                                data.nextprev = [notes[index - 1], notes[index + 1]];
                                 controllers.renderData(request, response, data);
                             }
                         });
