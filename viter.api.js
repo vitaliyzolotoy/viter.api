@@ -1,8 +1,12 @@
-var fs = require('fs'),
+var config = require('./config'),
+    fs = require('fs'),
     express = require('express'),
     mongoose = require('mongoose'),
     aws = require('aws-sdk'),
     viter = express();
+
+// AWS config
+aws.config.loadFromPath('./aws.json');
 
 // Database
 mongoose.connect('mongodb://0.0.0.0/viter');
@@ -288,7 +292,7 @@ var controllers = {
         });
     },
 
-    login: function (request, response) {
+    login: function(request, response) {
         var data = {};
         if (request.body && request.body.email === 'e' && request.body.password === 'p') {
             data.message = 'welcome';
@@ -296,6 +300,45 @@ var controllers = {
             data.message = 'user not found';
         }
         controllers.renderData(request, response, data);
+    },
+
+    uploadMedia: function(request, response) {
+        var data = {},
+            media = request.files;
+        data.files = [];
+        if (media) {
+            Object.keys(request.files).map(function(index) {
+                var fileName = media[index].name,
+                    filePath = media[index].path,
+                    fileSize = media[index].size;
+                data.files.push(fileName);
+                fs.readFile(filePath, function(error, buffer) {
+                    params = {
+                        Bucket: config.bucket,
+                        Key: fileName,
+                        Body: buffer
+                    };
+                    if (fileSize > 0) {
+                        var s3 = new aws.S3();
+                        s3.putObject(params, function (error) {
+                            if (!error) {
+                                data.status = '200 OK';
+                                data.message = 'Successfully uploaded data';
+                                controllers.renderData(request, response, data);
+                            } else {
+                                data.status = '400 Bad Request';
+                                data.message = 'Error uploading data';
+                                controllers.renderData(request, response, data);
+                                console.log(error);
+                            }
+                        });
+                    };
+                });
+            });
+        } else {
+            data.status = '204 No Content';
+            controllers.renderData(request, response, data);
+        };
     }
 
 };
@@ -348,6 +391,11 @@ viter.get('/tags/:id', function (request, response) {
 // Login
 viter.get('/login', function (request, response) {
     controllers.login(request, response);
+});
+
+// Upload Media
+viter.post('/media', function (request, response) {
+    controllers.uploadMedia(request, response);
 });
 
 viter.listen(4000);

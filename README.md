@@ -144,3 +144,20 @@ Sample Response
 ```
 
 
+
+### POST /media ###
+##### Upload media #####
+This method allows you upload media ti storage
+
+Request URL:
+``` http://localhost:4000/media ```
+
+Sample Response
+```
+{
+    "status": "200 OK",
+    "message": "Successfully uploaded data"
+}
+```
+
+
