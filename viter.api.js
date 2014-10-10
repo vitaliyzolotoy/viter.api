@@ -57,7 +57,6 @@ var chapter = mongoose.Schema({
     section: {
         type: String,
         required: true,
-        default: 0
     },
     created: {
         type: Date,
@@ -202,12 +201,13 @@ var controllers = {
 
     updateNoteById: function(request, response) {
         var data = {};
+        console.log(request.body);
         if (controllers.isClient(request, response)) {
             NoteModel.findById(request.params.id, function (error, note) {
                 if (note) {
                     if (request.body.title && request.body.content && request.body.chapter) {
                         note.title = request.body.title;
-                        note.chapter = request.body.chapter,
+                        note.chapter = request.body.chapter.select,
                         note.content = request.body.content;
                         note.modified = Date.now();
                         note.save(function(error) {
