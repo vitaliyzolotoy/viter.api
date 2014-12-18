@@ -29,21 +29,21 @@ var note = mongoose.Schema({
         type: String,
         required: true
     },
-    section: {
-        type: String,
-        required: true,
-    },
-    chapter: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
     created: {
-        type: Date,
-        default: Date.now
+        type: Date
     },
     modified: {
-        type: Date,
-        default: Date.now
+        type: Date
+    },
+    published: {
+        type: Boolean,
+        default: false
+    },
+    chapter: {
+        type: mongoose.Schema.Types.ObjectId
+    },
+    section: {
+        type: String
     }
 });
 
@@ -89,7 +89,7 @@ var controllers = {
     getNotesList: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            NoteModel.find(null, null, {sort: {created: -1}}, function(error, notes) {
             // NoteModel.find({}, null, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
@@ -112,61 +112,21 @@ var controllers = {
     createNewNote: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            if (request.body.title && request.body.content && request.body.chapter) {
-                if (request.body.chapter.create) {
-                    ChapterModel.count({}, function(error, count) {
-                        if (!error) {
-                            var chapter;
-                            chapter = new ChapterModel({
-                                content: request.body.chapter.create,
-                                section: count + 1
-                            });
-                            chapter.save(function(error, chapter) {
-                                if (!error) {
-                                    NoteModel.count({'chapter': chapter._id}, function(error, count) {
-                                        var note;
-                                        note = new NoteModel({
-                                            title: request.body.title,
-                                            content: request.body.content,
-                                            section: chapter.section + '.' + (count + 1),
-                                            chapter: chapter._id
-                                        });
-                                        note.save(function(error) {
-                                            if (!error) {
-                                                data.status = '200 OK';
-                                                data.message = 'The note was created';
-                                                data.note = note;
-                                                controllers.renderData(request, response, data);
-                                            };
-                                        });
-                                    });
-                                };
-                            });
-                        };
-                    });
-                } else {
-                    ChapterModel.findById(request.body.chapter.select, function(error, chapter) {
-                        if (!error) {
-                            NoteModel.count({'chapter': chapter._id}, function(error, count) {
-                                var note;
-                                note = new NoteModel({
-                                    title: request.body.title,
-                                    content: request.body.content,
-                                    section: chapter.section + '.' + (count + 1),
-                                    chapter: chapter._id,
-                                });
-                                note.save(function(error) {
-                                    if (!error) {
-                                        data.status = '200 OK';
-                                        data.message = 'The note was created';
-                                        data.note = note;
-                                        controllers.renderData(request, response, data);
-                                    };
-                                });
-                            });
-                        };
-                    });
-                };
+            if (request.body.title && request.body.content) {
+                var note;
+                note = new NoteModel({
+                    title: request.body.title,
+                    content: request.body.content,
+                    created: Date.now(),
+                });
+                note.save(function(error) {
+                    if (!error) {
+                        data.status = '200 OK';
+                        data.message = 'The note was created';
+                        data.note = note;
+                        controllers.renderData(request, response, data);
+                    };
+                });
             } else {
                 data.status = '400 Bad Request';
                 controllers.renderData(request, response, data);
@@ -174,7 +134,7 @@ var controllers = {
         } else {
             data.status = '403 Forbidden';
             controllers.renderData(request, response, data);
-        };
+        }
     },
 
     getNoteById: function(request, response) {
@@ -201,35 +161,93 @@ var controllers = {
 
     updateNoteById: function(request, response) {
         var data = {};
-        console.log(request.body);
         if (controllers.isClient(request, response)) {
-            NoteModel.findById(request.params.id, function (error, note) {
-                if (note) {
-                    if (request.body.title && request.body.content && request.body.chapter) {
-                        note.title = request.body.title;
-                        note.chapter = request.body.chapter.select,
-                        note.content = request.body.content;
-                        note.modified = Date.now();
-                        note.save(function(error) {
-                            if (!error) {
-                                data.status = '200 OK';
-                                data.message = 'The note was updated';
-                                controllers.renderData(request, response, data);
-                            }
-                        });
+            NoteModel.findById(request.params.id, function(error, note) {
+                if (!error) {
+                    if (note) {
+                        if (request.body.title && request.body.content) {
+                            if (request.body.publish === true && request.body.chapter) {
+                                if (request.body.chapter.create) {
+                                    ChapterModel.count({}, function(error, count) {
+                                        if (!error) {
+                                            var chapter;
+                                            chapter = new ChapterModel({
+                                                content: request.body.chapter.create,
+                                                section: count + 1
+                                            });
+                                            chapter.save(function(error, chapter) {
+                                                if (!error) {
+                                                    NoteModel.count({'chapter': chapter._id}, function(error, count) {
+                                                        note.title = request.body.title;
+                                                        note.content = request.body.content,
+                                                        note.created = Date.now();
+                                                        note.modified = Date.now();
+                                                        note.published = true;
+                                                        note.chapter = chapter._id;
+                                                        note.section = chapter.section + '.' + (count + 1);
+                                                        note.save(function(error, note) {
+                                                            if (!error) {
+                                                                data.status = '200 OK';
+                                                                data.message = 'The note was updated';
+                                                                data.note = note;
+                                                                controllers.renderData(request, response, data);
+                                                            }
+                                                        });
+                                                    });
+                                                };
+                                            });
+                                        };
+                                    });
+                                } else {
+                                    ChapterModel.findById(request.body.chapter.select, function(error, chapter) {
+                                        if (!error) {
+                                            NoteModel.count({'chapter': chapter._id}, function(error, count) {
+                                                note.title = request.body.title;
+                                                note.content = request.body.content;
+                                                note.created = Date.now();
+                                                note.modified = Date.now();
+                                                note.published = true;
+                                                note.chapter = chapter._id;
+                                                note.section = chapter.section + '.' + (count + 1);
+                                                note.save(function(error, note) {
+                                                    if (!error) {
+                                                        data.status = '200 OK';
+                                                        data.message = 'The note was updated';
+                                                        data.note = note;
+                                                        controllers.renderData(request, response, data);
+                                                    }
+                                                });
+                                            });
+                                        };
+                                    });
+                                };
+                            } else {
+                                note.title = request.body.title;
+                                note.content = request.body.content;
+                                note.modified = Date.now();
+                                note.save(function(error, note) {
+                                    if (!error) {
+                                        data.status = '200 OK';
+                                        data.message = 'The note was updated';
+                                        data.note = note;
+                                        controllers.renderData(request, response, data);
+                                    }
+                                });
+                            };
+                        } else {
+                            data.status = '400 Bad Request';
+                            controllers.renderData(request, response, data);
+                        };
                     } else {
-                        data.status = '400 Bad Request';
+                        data.status = '204 No Content';
                         controllers.renderData(request, response, data);
-                    }
-                } else {
-                    data.status = '204 No Content';
-                    controllers.renderData(request, response, data);
-                }
+                    };
+                };
             });
         } else {
             data.status = '403 Forbidden';
             controllers.renderData(request, response, data);
-        }
+        };
     },
 
     destroyNoteById: function(request, response) {
@@ -283,6 +301,7 @@ var controllers = {
     },
 
     login: function(request, response) {
+        console.log(request.headers);
         var data = {};
         if (request.body && request.body.email === 'e' && request.body.password === 'p') {
             data.message = 'welcome';
@@ -374,29 +393,7 @@ var controllers = {
             data.status = '403 Forbidden';
             controllers.renderData(request, response, data);
         }
-    },
-
-    // getTagsListRelationalToId: function(request, response) {
-    //     var data = {};
-    //     if (controllers.isClient(request, response)) {
-    //         TagModel.find({'relational': request.params.id}, null, {sort: {created: -1}}, function(error, tags) {
-    //             if (!error) {
-    //                 if (tags != false) {
-    //                     data.status = '200 OK';
-    //                     data.message = 'A list of all tags relational to ID';
-    //                     data.tags = tags;
-    //                     controllers.renderData(request, response, data);
-    //                 } else {
-    //                     data.status = '204 No Content';
-    //                     controllers.renderData(request, response, data);
-    //                 }
-    //             }
-    //         });
-    //     } else {
-    //         data.status = '403 Forbidden';
-    //         controllers.renderData(request, response, data);
-    //     }
-    // }
+    }
 
 };
 
@@ -436,7 +433,7 @@ viter.get('/nextprev/:id', function (request, response) {
 });
 
 // Login
-viter.get('/login', function (request, response) {
+viter.post('/oauth/request_token', function (request, response) {
     controllers.login(request, response);
 });
 
