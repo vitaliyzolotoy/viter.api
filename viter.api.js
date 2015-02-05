@@ -1,4 +1,4 @@
-var config = require('./config'),
+var //config = require('./config'),
     fs = require('fs'),
     express = require('express'),
     mongoose = require('mongoose'),
@@ -6,7 +6,7 @@ var config = require('./config'),
     viter = express();
 
 // AWS config
-aws.config.loadFromPath('./aws.json');
+// aws.config.loadFromPath('./aws.json');
 
 // Database
 mongoose.connect('mongodb://0.0.0.0/viter');
@@ -311,44 +311,44 @@ var controllers = {
         controllers.renderData(request, response, data);
     },
 
-    uploadMedia: function(request, response) {
-        var data = {},
-            media = request.files;
-        data.files = [];
-        if (media) {
-            Object.keys(request.files).map(function(index) {
-                var fileName = media[index].name,
-                    filePath = media[index].path,
-                    fileSize = media[index].size;
-                data.files.push(fileName);
-                fs.readFile(filePath, function(error, buffer) {
-                    params = {
-                        Bucket: config.bucket,
-                        Key: fileName,
-                        Body: buffer
-                    };
-                    if (fileSize > 0) {
-                        var s3 = new aws.S3();
-                        s3.putObject(params, function (error) {
-                            if (!error) {
-                                data.status = '200 OK';
-                                data.message = 'Successfully uploaded data';
-                                controllers.renderData(request, response, data);
-                            } else {
-                                data.status = '400 Bad Request';
-                                data.message = 'Error uploading data';
-                                controllers.renderData(request, response, data);
-                                console.log(error);
-                            }
-                        });
-                    };
-                });
-            });
-        } else {
-            data.status = '204 No Content';
-            controllers.renderData(request, response, data);
-        };
-    },
+    // uploadMedia: function(request, response) {
+    //     var data = {},
+    //         media = request.files;
+    //     data.files = [];
+    //     if (media) {
+    //         Object.keys(request.files).map(function(index) {
+    //             var fileName = media[index].name,
+    //                 filePath = media[index].path,
+    //                 fileSize = media[index].size;
+    //             data.files.push(fileName);
+    //             fs.readFile(filePath, function(error, buffer) {
+    //                 params = {
+    //                     Bucket: config.bucket,
+    //                     Key: fileName,
+    //                     Body: buffer
+    //                 };
+    //                 if (fileSize > 0) {
+    //                     var s3 = new aws.S3();
+    //                     s3.putObject(params, function (error) {
+    //                         if (!error) {
+    //                             data.status = '200 OK';
+    //                             data.message = 'Successfully uploaded data';
+    //                             controllers.renderData(request, response, data);
+    //                         } else {
+    //                             data.status = '400 Bad Request';
+    //                             data.message = 'Error uploading data';
+    //                             controllers.renderData(request, response, data);
+    //                             console.log(error);
+    //                         }
+    //                     });
+    //                 };
+    //             });
+    //         });
+    //     } else {
+    //         data.status = '204 No Content';
+    //         controllers.renderData(request, response, data);
+    //     };
+    // },
 
     getChaptersList: function(request, response) {
         var data = {};
@@ -438,9 +438,9 @@ viter.post('/oauth/request_token', function (request, response) {
 });
 
 // Upload Media
-viter.post('/media', function (request, response) {
-    controllers.uploadMedia(request, response);
-});
+// viter.post('/media', function (request, response) {
+//     controllers.uploadMedia(request, response);
+// });
 
 // Show All Chapters
 viter.get('/chapters', function (request, response) {
