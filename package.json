@@ -11,9 +11,8 @@
         "url": "git://github.com/zolotoy/viter.api.git"
     },
     "dependencies": {
-        "express": "3.4.3",
-        "mongoose": "3.8.6",
-        "aws-sdk": "latest"
+        "express": "4.11.2",
+        "mongoose": "3.8.23"
     },
     "engines": {
         "node": ">= 0.8.0"

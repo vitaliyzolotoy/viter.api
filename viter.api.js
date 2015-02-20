@@ -2,7 +2,7 @@ var //config = require('./config'),
     fs = require('fs'),
     express = require('express'),
     mongoose = require('mongoose'),
-    aws = require('aws-sdk'),
+    // aws = require('aws-sdk'),
     viter = express();
 
 // AWS config
@@ -12,13 +12,13 @@ var //config = require('./config'),
 mongoose.connect('mongodb://0.0.0.0/viter');
 
 // Config
-viter.configure(function(){
-    viter.set('port', process.env.PORT || 4000);
-    viter.use(express.logger('dev'));
-    viter.use(express.bodyParser());
-    viter.use(express.methodOverride());
-    viter.use(viter.router);
-});
+// viter.configure(function(){
+//     viter.set('port', process.env.PORT || 4000);
+//     viter.use(express.logger('dev'));
+//     viter.use(express.bodyParser());
+//     viter.use(express.methodOverride());
+//     viter.use(viter.router);
+// });
 
 var note = mongoose.Schema({
     title: {
@@ -30,10 +30,12 @@ var note = mongoose.Schema({
         required: true
     },
     created: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     modified: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     published: {
         type: Boolean,
