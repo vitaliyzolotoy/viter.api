@@ -1,6 +1,7 @@
 var //config = require('./config'),
     fs = require('fs'),
     express = require('express'),
+    bodyParser  = require('body-parser'),
     mongoose = require('mongoose'),
     // aws = require('aws-sdk'),
     viter = express();
@@ -12,6 +13,9 @@ var //config = require('./config'),
 mongoose.connect('mongodb://0.0.0.0/viter');
 
 // Config
+viter.set('port', process.env.PORT || 4000);
+viter.use(bodyParser());
+
 // viter.configure(function(){
 //     viter.set('port', process.env.PORT || 4000);
 //     viter.use(express.logger('dev'));
