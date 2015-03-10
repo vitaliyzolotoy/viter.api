@@ -16,14 +16,6 @@ mongoose.connect('mongodb://0.0.0.0/viter');
 viter.set('port', process.env.PORT || 4000);
 viter.use(bodyParser());
 
-// viter.configure(function(){
-//     viter.set('port', process.env.PORT || 4000);
-//     viter.use(express.logger('dev'));
-//     viter.use(express.bodyParser());
-//     viter.use(express.methodOverride());
-//     viter.use(viter.router);
-// });
-
 var note = mongoose.Schema({
     title: {
         type: String,
@@ -95,8 +87,8 @@ var controllers = {
     getNotesList: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            NoteModel.find(null, null, {sort: {created: -1}}, function(error, notes) {
-            // NoteModel.find({}, null, function(error, notes) {
+            // NoteModel.find(null, null, {sort: {created: -1}}, function(error, notes) {
+            NoteModel.find({}, null, {sort: {chapter: 1}}, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         data.status = '200 OK';
@@ -282,8 +274,8 @@ var controllers = {
     getNextAndPrevNote: function(request, response) {
         var data = {};
         if (controllers.isClient(request, response)) {
-            NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
-            // NoteModel.find({}, null, function(error, notes) {
+            // NoteModel.find({}, null, {sort: {created: -1}}, function(error, notes) {
+            NoteModel.find({}, null, {sort: {chapter: 1}}, function(error, notes) {
                 if (!error) {
                     if (notes != false) {
                         notes.filter(function(note, index) {
@@ -316,45 +308,6 @@ var controllers = {
         }
         controllers.renderData(request, response, data);
     },
-
-    // uploadMedia: function(request, response) {
-    //     var data = {},
-    //         media = request.files;
-    //     data.files = [];
-    //     if (media) {
-    //         Object.keys(request.files).map(function(index) {
-    //             var fileName = media[index].name,
-    //                 filePath = media[index].path,
-    //                 fileSize = media[index].size;
-    //             data.files.push(fileName);
-    //             fs.readFile(filePath, function(error, buffer) {
-    //                 params = {
-    //                     Bucket: config.bucket,
-    //                     Key: fileName,
-    //                     Body: buffer
-    //                 };
-    //                 if (fileSize > 0) {
-    //                     var s3 = new aws.S3();
-    //                     s3.putObject(params, function (error) {
-    //                         if (!error) {
-    //                             data.status = '200 OK';
-    //                             data.message = 'Successfully uploaded data';
-    //                             controllers.renderData(request, response, data);
-    //                         } else {
-    //                             data.status = '400 Bad Request';
-    //                             data.message = 'Error uploading data';
-    //                             controllers.renderData(request, response, data);
-    //                             console.log(error);
-    //                         }
-    //                     });
-    //                 };
-    //             });
-    //         });
-    //     } else {
-    //         data.status = '204 No Content';
-    //         controllers.renderData(request, response, data);
-    //     };
-    // },
 
     getChaptersList: function(request, response) {
         var data = {};
@@ -438,25 +391,10 @@ viter.get('/nextprev/:id', function (request, response) {
     controllers.getNextAndPrevNote(request, response);
 });
 
-// Login
-viter.post('/oauth/request_token', function (request, response) {
-    controllers.login(request, response);
-});
-
-// Upload Media
-// viter.post('/media', function (request, response) {
-//     controllers.uploadMedia(request, response);
-// });
-
 // Show All Chapters
 viter.get('/chapters', function (request, response) {
     controllers.getChaptersList(request, response);
 });
-
-// New Chapter
-// viter.post('/chapters', function (request, response) {
-//     controllers.createNewChapter(request, response);
-// });
 
 // Show Chapter
 viter.get('/chapters/:id', function (request, response) {
