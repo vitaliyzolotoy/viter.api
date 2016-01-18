@@ -3,18 +3,18 @@ var //config = require('./config'),
     express = require('express'),
     bodyParser  = require('body-parser'),
     mongoose = require('mongoose'),
-    // aws = require('aws-sdk'),
+    aws = require('aws-sdk'),
     viter = express();
 
 // AWS config
-// aws.config.loadFromPath('./aws.json');
+aws.config.loadFromPath('./aws.json');
 
 // Database
 mongoose.connect('mongodb://0.0.0.0/viter');
 
 // Config
 viter.set('port', process.env.PORT || 4000);
-viter.use(bodyParser());
+viter.use(bodyParser({limit: '50mb'}));
 
 var note = mongoose.Schema({
     title: {
@@ -352,8 +352,35 @@ var controllers = {
             data.status = '403 Forbidden';
             controllers.renderData(request, response, data);
         }
-    }
+    },
 
+    uploadMedia: function(request, response) {
+        var data = {};
+        if (controllers.isClient(request, response)) {
+            var s3bucket = new aws.S3({ params: { Bucket: 'assets.thefeature.com.ua' } });
+            var imageName = Math.random().toString(36).substr(2, 9);
+            var imageBody = new Buffer(request.body.file.replace(/^data:image\/\w+;base64,/, ''),'base64');
+            var params = {
+                Key: imageName, 
+                Body: imageBody,
+                ContentEncoding: 'base64',
+                ContentType: request.body.type
+            };
+            s3bucket.upload(params, function(err, file) {
+                if (err) {
+                    console.log("Error uploading data: ", err);
+                } else {
+                    data.status = '200 OK';
+                    data.message = 'A Media was uploaded';
+                    data.url = 'http://assets.thefeature.com.ua/' + imageName;
+                    controllers.renderData(request, response, data);
+                };
+            });
+        } else {
+            data.status = '403 Forbidden';
+            controllers.renderData(request, response, data);
+        }
+    }
 };
 
 // Status
@@ -399,6 +426,11 @@ viter.get('/chapters', function (request, response) {
 // Show Chapter
 viter.get('/chapters/:id', function (request, response) {
     controllers.getChapterById(request, response);
+});
+
+// Upload Media
+viter.post('/upload', function (request, response) {
+    controllers.uploadMedia(request, response);
 });
 
 viter.listen(4000);
